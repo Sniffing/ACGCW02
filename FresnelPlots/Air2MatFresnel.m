@@ -1,4 +1,4 @@
-function [reflPar, reflPerp, Brewsters] = Air2MatFresnel()
+function [Brewsters] = Air2MatFresnel()
 %Fresnal Reflection from Air(1.0) to Material (1.5)
 %   Fucntion will generate plots of Fresnal reflectance 
 %   for a dielectric material (index of refraction = 1.5)
@@ -13,12 +13,12 @@ refMat = 1.5; %nt
 refAir = 1.0; %ni
 
 % plot spacing
-incidenceAngles = linspace(0,pi/2,300);
+incidenceAngles = linspace(0,pi/2,100);
 transmissionAngles = getTransAngles(incidenceAngles,refAir,refMat);
 
-parComponent = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
-Brewsters = parComponent(2);
-parComponent = parComponent(1);
+[Brewsters,parComponent] = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
+Brewsters
+BrewstersAngle = (Brewsters/pi) * 180
 perpComponent = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
 
 figure
@@ -40,9 +40,8 @@ function [Brewsters,reflectance] = parReflectance(incidenceAngles,transmissionAn
     airPar = refAir * cos(transmissionAngles);
     materialPar = refMat * cos(incidenceAngles);
     reflectance = abs((materialPar-airPar) ./ (materialPar+airPar));
-    
-    Brewsters = min(reflectance)
-    
+    [C,I] = min(reflectance);
+    Brewsters = incidenceAngles(I);
 end
 
 %Fresnel Reflectance for perpendicular polarized light
