@@ -9,17 +9,19 @@ function [CriticalAngle] = Mat2AirFresnel()
 %   normal incidence and the Brewster's angle.
 
 % Constant refraction indices
-refMat = 1.5; %nt
-refAir = 1.0; %ni
+refMat = 1.5; %ni
+refAir = 1.0; %nt
 
 % plot spacing
 incidenceAngles = linspace(0,pi/2,100);
 transmissionAngles = getTransAngles(incidenceAngles,refAir,refMat);
 
-parComponent = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
+[parCrit,parComponent] = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
+[perpCrit,perpComponent] = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
 
-perpComponent = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
-
+CriticalAngle = parCrit;
+CritAngleDegrees = CriticalAngle / pi * 180
+perpCrit;
 figure
 plot(incidenceAngles,parComponent, incidenceAngles, perpComponent)
 
@@ -29,23 +31,29 @@ end
 function transmissionAngles = getTransAngles(incidenceAngles,refAir,refMat)
     transmissionAngles= zeros(1,size(incidenceAngles,2));
     for i = 1:size(incidenceAngles,2)
-        snells = refAir*sin(incidenceAngles(i));
-        transmissionAngles(i) = asin(snells/refMat);
+        snells = refMat*sin(incidenceAngles(i));
+        transmissionAngles(i) = asin(snells/refAir);
     end
 end
 
 %Fresnel Reflectance for parallel polarized light
-function reflectance = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
+function [critical,reflectance] = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPar = refAir * cos(transmissionAngles);
     materialPar = refMat * cos(incidenceAngles);
     reflectance = abs((materialPar-airPar) ./ (materialPar+airPar));
+    [~,I] = find(reflectance == 1);
+    critical = incidenceAngles(I);
+    critical = critical(1);
 end
 
 %Fresnel Reflectance for perpendicular polarized light
-function reflectance = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
+function [critical,reflectance] = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPerp = refAir * cos(incidenceAngles);
     materialPerp = refMat * cos(transmissionAngles);
     reflectance = abs((airPerp-materialPerp) ./ (airPerp+materialPerp));
+    [~,I] = find(reflectance == 1.0);
+    critical = incidenceAngles(I);
+    critical = critical(1);
 end
 
 
