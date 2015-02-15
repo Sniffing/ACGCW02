@@ -1,0 +1,69 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{hyperref}
+
+\linespread{1.1} % Line spacing
+\usepackage[total={6in, 9in}]{geometry}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+
+
+\begin{document}
+\title{Advanced Computer Graphics\\ Coursework 2}
+\author{Terence Tse, Zhou Yu \\ Team JT}
+\maketitle
+\newpage
+
+\section{Part 1: Fresnel reflectance}
+Using the equations outlined in the notes for Fresnel reflectance,
+the graph depicting parallel and perpendicular components of air to glass
+(1.0 refraction index to 1.5) can be seen in XXXXXXTODOXXXXXXXX. The
+graph of Fresnel Reflectance from glass to air (1.5 to 1.0) is shown in 
+XXXXXTODOXXXXXXXXX. The curve for Schlick's approximation of Fresnel
+reflectance is named XXXTODOXXX. These can all be found in the "part1" folder
+in the pictures folder of the attached files.\\
+\\
+From air to glass, we took the parallel component measurements and found
+Brewster's angle to be $XXXXXXTODOXXXXXXX$.\\
+\\
+From glass to air, we took the parallel component measurements and from here
+could owrk out the critical angle to be $XXXXTODOXXXX$.\\
+\\
+Finally, with Schlick's approximation, we made sure to use the reflectance
+of normal incidence from the air to glass Fresnel reflectance graph which 
+was $2.0$.
+
+\section{Part 2: Environment Map(EM) sample generation}
+The samples we took from the environment map can be see in XXXTODOXXX.pfm which
+is in the "part2" folder of the pictures folder in the attached files. For 
+each sample pixel, we have surrounded it with a XXXXXXXXTODOXXXXXXXX 
+neighbourhood for better visualisation.\\
+\\
+We have done sampling with the number of samples, N, being 64, 256 and 1024.
+These are "Sampling64.ppm", "Sampling256.ppm" and "Sampling1024.ppm". We have
+gamma corrected these too.
+
+\section{Part 3: Environment Map(EM) Sphere Rendering}
+
+
+
+\section{Part 4: Rendering a Sphere with Grace EM and PBRT}
+Albedo was set at 1.0 and the three sphere can be seen in the
+part4 folder of the pictures folder attached. These are the
+.pfm and .ppm images named "PBRTSphere8", 
+"PBRTSphere16" and "PBRTSphere32" for the 8,16, and
+32 sample msampling methods.\\
+\\
+As we can see from these images XXXXXXXXXXXXXXXXXXXXXXXXTODOXXXXXXXXXXX
+%Something about the noise decreasing or some shit
+
+\end{document}
