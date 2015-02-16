@@ -7,7 +7,7 @@
 \usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
 \usepackage{graphicx} % Required to insert images
-\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{gensymb}
 \usepackage{hyperref}
 
 \linespread{1.1} % Line spacing
@@ -26,21 +26,44 @@
 \section{Part 1: Fresnel reflectance}
 Using the equations outlined in the notes for Fresnel reflectance,
 the graph depicting parallel and perpendicular components of air to glass
-(1.0 refraction index to 1.5) can be seen in XXXXXXTODOXXXXXXXX. The
+(or some other material with a refraction index of 1.5)
+which was a refraction index of 1.0 to 1.5 and can be seen in Figure 1. The
 graph of Fresnel Reflectance from glass to air (1.5 to 1.0) is shown in 
-XXXXXTODOXXXXXXXXX. The curve for Schlick's approximation of Fresnel
-reflectance is named XXXTODOXXX. These can all be found in the "part1" folder
+Figure 2. The curve for Schlick's approximation of Fresnel
+reflectance is seen in Figure 3. These can all be found in the "part1" folder
 in the pictures folder of the attached files.\\
 \\
 From air to glass, we took the parallel component measurements and found
-Brewster's angle to be $XXXXXXTODOXXXXXXX$.\\
-\\
+Brewster's angle to be \texttt{0.9837 radians} ($56.3636\degree$).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{pics/part1/air2glass.png}
+	\caption{From a 1.0 index of refraction to 1.5}
+\end{figure}
+
 From glass to air, we took the parallel component measurements and from here
-could owrk out the critical angle to be $XXXXTODOXXXX$.\\
-\\
+could owrk out the critical angle to be \texttt{0.7299 radians} 
+($41.8182\degrees$).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{pics/part1/glass2air.png}
+	\caption{From a 1.5 index of refraction to 1.0}
+\end{figure}
+
+\newpage
+
 Finally, with Schlick's approximation, we made sure to use the reflectance
 of normal incidence from the air to glass Fresnel reflectance graph which 
 was $2.0$.
+
+\begin{figure}[h]
+	\centering	
+	\includegraphics[scale=0.5]{pics/part1/Schlick.png}
+	\caption{From a 1.0 index of refraction to 1.5}
+\end{figure}
+
 
 \section{Part 2: Environment Map(EM) sample generation}
 The samples we took from the environment map can be see in XXXTODOXXX.pfm which

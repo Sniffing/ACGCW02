@@ -24,7 +24,7 @@ CritAngleDegrees = CriticalAngle / pi * 180
 perpCrit;
 figure
 plot(incidenceAngles,parComponent, incidenceAngles, perpComponent)
-
+ylim([0,1]);
 end
 
 %Works out transmission angles from Snell's equation
