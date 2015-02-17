@@ -1,51 +1,93 @@
 #include "util.h"
 
-class EM
+EM::EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents)
 {
-  public:
-    vector<float> pY;
-    vector<vector<float> > pXs;
-    EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents)
+  this->img_in = img_in;
+  this->width = width;
+  this->height = height;
+  this->numComponents = numComponents;
+  vector<float> pY;
+  vector<float> cY;
+  vector<vector<float> > pXs;
+  vector<vector<float> > cXs;
+  float rowSum, rowAvg;
+  float rowAvgSum = 0;
+  float luminance;
+  for(unsigned int i = 0; i < height; ++i)
+  {
+    vector<float> rowPDF;
+    vector<float> rowCDF;
+    rowSum = 0;
+    for(unsigned int j = 0; j < width; ++j)
     {
-      float rowSum, rowAvg;
-      float rowAvgSum = 0;
-      float luminance;
-      for(unsigned int i = 0; i < height; ++i)
+      luminance = 0;
+      for(unsigned int k = 0; k < numComponents; ++k)
       {
-        vector<float> rowPDF;
-        rowSum = 0;
-        for(unsigned int j = 0; j < width; ++j)
-        {
-          luminance = 0;
-          for(unsigned int k = 0; k < numComponents; ++k)
-          {
-            unsigned int index = i*width*numComponents + j*numComponents + k;
-            luminance += img_in[index];
-          }
-          luminance /= numComponents;
-          // SOLID angle scaling
-          luminance = sin(luminance*((float)i/(float)height)*PI);
-
-          rowPDF.push_back(luminance);
-          rowSum += luminance;
-        }
-        rowAvg = rowSum/width;
-        rowAvgSum += rowAvg;
-        pY.push_back(rowAvg);
-        for(size_t i = 0; i < rowPDF.size(); ++i)
-        {
-          rowPDF[i] /= rowSum;
-        }
-        pXs.push_back(rowPDF);
+        unsigned int index = i*width*numComponents + j*numComponents + k;
+        luminance += img_in[index];
       }
+      luminance /= numComponents;
+      // SOLID angle scaling
+      luminance = sin(luminance*((float)i/(float)height)*PI);
 
-      for(size_t i = 0; i < pY.size(); ++i)
-      {
-        pY[i] /= rowAvgSum;
-      }
+      rowPDF.push_back(luminance);
+      rowSum += luminance;
     }
+    rowAvg = rowSum/width;
+    rowAvgSum += rowAvg;
+    pY.push_back(rowAvg);
+    float cumulativeX = 0;
+    for(size_t i = 0; i < rowPDF.size(); ++i)
+    {
+      rowPDF[i] /= rowSum;
+      cumulativeX += rowPDF[i];
+      rowCDF.push_back(cumulativeX);
+    }
+    pXs.push_back(rowPDF);
+    cXs.push_back(rowCDF);
+  }
 
-};
+  float cumulativeY = 0;
+  for(size_t i = 0; i < pY.size(); ++i)
+  {
+    pY[i] /= rowAvgSum;
+    cumulativeY += pY[i];
+    cY.push_back(cumulativeY);
+    cout << "Pushed back " << cY[i] << "solid" << endl;
+  }
+}
+
+void EM::sample(vector<pair<int, int> > samples)
+{
+
+}
+
+void EM::color(unsigned int x, unsigned int y)
+{
+  float* pixel = this->img_in;
+  for(int i = x-HALF_NEIGHBOURHOOD; i <= (int)x+HALF_NEIGHBOURHOOD; ++i)
+  {
+    for(int j = y-HALF_NEIGHBOURHOOD; j <= (int)y+HALF_NEIGHBOURHOOD; ++j)
+    {
+      if(i >= 0 && i <= (int)this->width && j >= 0 && j <= (int)height && 
+          !(i == (int)x && j == (int)y))
+      {
+        unsigned int index = j*this->width*numComponents + i*numComponents;
+        for(unsigned int k = 0; k < this->numComponents; ++k)
+        {
+          if(k == 1)
+          {
+            pixel[index+k] = 1;
+          }
+          else 
+          {
+            pixel[index+k] = 0;
+          }
+        }
+      }
+    } 
+  }
+}
 
 bool isInCircle(unsigned int width, unsigned int height)
 {
@@ -263,7 +305,7 @@ void reflectanceCircleAndSavePFM(const char *image_out)
   width = DIAMETER; 
   height = DIAMETER;
   numComponents = DIMENSION;
-  
+
   float *img_out = new float [width*height*numComponents];
 
   vector<float> normal;
