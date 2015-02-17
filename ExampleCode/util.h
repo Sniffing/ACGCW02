@@ -14,6 +14,7 @@
 #define RADIUS 255
 #define DIAMETER 511
 #define DIMENSION 3
+#define HALF_NEIGHBOURHOOD 4
 #include <iostream>
 
 /*//////////////////////////////////////////////////////////////////////////
@@ -70,4 +71,18 @@ void mapLatLongToSphere(const char* reflectance, const char* latLongMap,
 float returnHDRCoponentPFM(vector<float*> imgs_in, unsigned int index);
 
 void processHDRAndSavePFM(vector<const char*> images_in, const char *image_out);
+class EM
+{
+  public:
+    EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents);
+    void sample(vector<pair<int, int> > samples);
+    void color(unsigned int x, unsigned int y);
+
+  private:
+    float* img_in;
+    unsigned int width;
+    unsigned int height;
+    unsigned int numComponents;
+};
+
 #endif
