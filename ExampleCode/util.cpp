@@ -6,18 +6,15 @@ EM::EM(float* img_in, unsigned int width, unsigned int height, unsigned int numC
   this->width = width;
   this->height = height;
   this->numComponents = numComponents;
-  vector<float> pY;
-  vector<float> cY;
-  vector<vector<float> > pXs;
-  vector<vector<float> > cXs;
   float rowSum, rowAvg;
   float rowAvgSum = 0;
-  float luminance;
+  float luminance, sinScale;
   for(unsigned int i = 0; i < height; ++i)
   {
     vector<float> rowPDF;
     vector<float> rowCDF;
     rowSum = 0;
+    sinScale = sin(((float)i/(float)height)*PI);
     for(unsigned int j = 0; j < width; ++j)
     {
       luminance = 0;
@@ -28,7 +25,7 @@ EM::EM(float* img_in, unsigned int width, unsigned int height, unsigned int numC
       }
       luminance /= numComponents;
       // SOLID angle scaling
-      luminance = sin(luminance*((float)i/(float)height)*PI);
+      luminance = luminance*sinScale;
 
       rowPDF.push_back(luminance);
       rowSum += luminance;
@@ -53,13 +50,50 @@ EM::EM(float* img_in, unsigned int width, unsigned int height, unsigned int numC
     pY[i] /= rowAvgSum;
     cumulativeY += pY[i];
     cY.push_back(cumulativeY);
-    cout << "Pushed back " << cY[i] << "solid" << endl;
   }
 }
 
-void EM::sample(vector<pair<int, int> > samples)
+void EM::sample(vector<pair<int, int> >& samples, int n)
 {
+  srand(time(NULL));
+  float r1, r2;
+  int col, row;
+  for(int i = 0; i < n; ++i)
+  {
+    r1 = (float)rand()/(float)RAND_MAX;
+    r2 = (float)rand()/(float)RAND_MAX;
+    row = binarySearch(cY, r1);
+    col = binarySearch(cXs[row], r2);
+    samples.push_back(make_pair(col, row));
+  }
+}
 
+// This algorithm returns the index i of the input element n, 
+// where cdf[i] <= n and cdf[i+1] > n, or i is cdf.size()-1
+int binarySearch(vector<float> cdf, float n)
+{
+  int begin = 0;
+  int end = cdf.size()-1;
+  int mid;
+  while(begin <= end)
+  {
+    if(begin == end)
+    {
+      return begin;
+    }
+    mid = (begin+end)/2;
+    if(cdf[mid] > n)
+    {
+      end = mid-1;
+    } else if(cdf[mid+1] > n)
+    {
+      return mid;
+    } else
+    {
+      begin = mid+1;
+    }
+  }
+  return -1;
 }
 
 void EM::color(unsigned int x, unsigned int y)
@@ -69,7 +103,7 @@ void EM::color(unsigned int x, unsigned int y)
   {
     for(int j = y-HALF_NEIGHBOURHOOD; j <= (int)y+HALF_NEIGHBOURHOOD; ++j)
     {
-      if(i >= 0 && i <= (int)this->width && j >= 0 && j <= (int)height && 
+      if(i >= 0 && i < (int)this->width && j >= 0 && j < (int)height && 
           !(i == (int)x && j == (int)y))
       {
         unsigned int index = j*this->width*numComponents + i*numComponents;

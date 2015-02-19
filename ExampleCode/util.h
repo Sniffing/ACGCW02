@@ -70,12 +70,14 @@ void mapLatLongToSphere(const char* reflectance, const char* latLongMap,
 
 float returnHDRCoponentPFM(vector<float*> imgs_in, unsigned int index);
 
+int binarySearch(vector<float> cdf, float n);
+
 void processHDRAndSavePFM(vector<const char*> images_in, const char *image_out);
 class EM
 {
   public:
     EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents);
-    void sample(vector<pair<int, int> > samples);
+    void sample(vector<pair<int, int> >& samples, int n);
     void color(unsigned int x, unsigned int y);
 
   private:
@@ -83,6 +85,10 @@ class EM
     unsigned int width;
     unsigned int height;
     unsigned int numComponents;
+    vector<float> pY;
+    vector<float> cY;
+    vector<vector<float> > pXs;
+    vector<vector<float> > cXs;
 };
 
 #endif
