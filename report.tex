@@ -44,7 +44,7 @@ Brewster's angle to be \texttt{0.9837 radians} ($56.3636\degree$).
 
 From glass to air, we took the parallel component measurements and from here
 could owrk out the critical angle to be \texttt{0.7299 radians} 
-($41.8182\degrees$).
+($41.8182\degree$).
 
 \begin{figure}[h]
 	\centering
@@ -66,10 +66,10 @@ was $2.0$.
 
 
 \section{Part 2: Environment Map(EM) sample generation}
-The samples we took from the environment map can be see in XXXTODOXXX.pfm which
-is in the "part2" folder of the pictures folder in the attached files. For 
-each sample pixel, we have surrounded it with a XXXXXXXXTODOXXXXXXXX 
-neighbourhood for better visualisation.\\
+The samples we took from the environment map can be see in 
+\texttt{pics/part2/sample*.pfm} and \texttt{pics/part2/sample*.ppm} in the 
+attached files. For each sample pixel, we have surrounded it with a $9$ pixel 
+neighbourhood for better visualisation. 
 \\
 We have done sampling with the number of samples, N, being 64, 256 and 1024.
 These are "Sampling64.ppm", "Sampling256.ppm" and "Sampling1024.ppm". We have
@@ -82,10 +82,9 @@ gamma corrected these too.
 \section{Part 4: Rendering a Sphere with Grace EM and PBRT}
 Albedo was set at 1.0 and the three sphere can be seen in the
 "part4" folder of the "pics" folder attached. These are the
-.pfm and .ppm images named "simple_sphere8", 
-"simple_sphere16" and "simple_sphere32" for the 8,16, and
-32 sample sampling methods.\\
-\\
+.pfm and .ppm images named "simplesphere8", 
+"simplesphere16" and "simplesphere32" for the 8,16, and
+32 sample sampling methods.
 As we can see from these images the general amount of noise 
 decreased quite noticeably from 8 to 16 samples and again 
 decreased from 16 to 32 but less noticeably.
