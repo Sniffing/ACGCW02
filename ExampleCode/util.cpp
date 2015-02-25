@@ -183,7 +183,6 @@ void renderSphereWithSample(EM em, float* sphere,
   vector<pair<unsigned int, unsigned int> > samples;
   em.sample(samples, n);
   float emLuminanceChannel = em.getLuminanceChannel();
-  printf("luminance %f\n", emLuminanceChannel);
 
   for(unsigned int i = 0; i < height; ++i)
   {
@@ -208,6 +207,7 @@ void renderSphereWithSample(EM em, float* sphere,
         vector<float> nRGBSample = em.getColorFromSample(samples[l]);
         for(int q = 0; q < DIMENSION; ++q)
         {
+          printf("rgbsample: %f\n", nRGBSample[q]);
           nRGB[q] += nRGBSample[q]*NdotL;
         }
       }
