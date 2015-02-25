@@ -207,10 +207,10 @@ void renderSphereWithSample(EM em, float* sphere,
         vector<float> nRGBSample = em.getColorFromSample(samples[l]);
         for(int q = 0; q < DIMENSION; ++q)
         {
-          printf("rgbsample: %f\n", nRGBSample[q]);
           nRGB[q] += nRGBSample[q]*NdotL;
         }
       }
+
       for(unsigned int l = 0; l < numComponents; ++l)
       {
         nRGB[l] /= samples.size();
@@ -219,7 +219,7 @@ void renderSphereWithSample(EM em, float* sphere,
       for(unsigned int k = 0; k < numComponents; ++k)
       {
         unsigned int index = i*width*numComponents+j*numComponents+k;
-        sphere[index] = emLuminanceChannel*nRGB[k];
+        sphere[index] = emLuminanceChannel*nRGB[k]/PI;
       }
     }
   }
@@ -427,7 +427,7 @@ void LoadPFMSavePPM(const char *image_in, const char *image_out, char (*func)(fl
 {
   unsigned int width, height, numComponents;
   float* img_in = loadPFM(image_in, width, height, numComponents);
-  toneMapper(img_in, width, height, numComponents);
+  //toneMapper(img_in, width, height, numComponents);
   unsigned char *img_out = new unsigned char [width*height*numComponents];
   applyFunctionOnAllPixelsPPMFromPFM(img_in, img_out, width, height, numComponents, func);
   WritePNM(image_out, width, height, numComponents, img_out);
