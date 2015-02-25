@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include "loadPNM.h"
+#include <stdio.h>
 
 #define PI 3.14159265358979323
 #define LOW_IGNORE_THRESH 0.005
@@ -81,6 +82,8 @@ class EM
     void sample(vector<pair<unsigned int, unsigned int> >& samples, int n);
     void color(unsigned int x, unsigned int y);
     vector<float> getComponentFromSample(pair<unsigned int, unsigned int> s);
+    vector<float> getColorFromSample(pair<unsigned int, unsigned int> s);
+    float getLuminanceChannel();
 
   private:
     float* img_in;
@@ -94,6 +97,6 @@ class EM
 };
 
 void renderSphereWithSample(EM em, float* sphere, 
-    unsigned int width, unsigned int height, unsigned int numComponents);
+    unsigned int width, unsigned int height, unsigned int numComponents, unsigned int n);
 
 #endif

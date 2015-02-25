@@ -17,15 +17,10 @@ int main(int argc, char** argv)
   unsigned int width, height, numComponents;
   float* img_in = loadPFM(argv[1], width, height, numComponents);
   EM myEM(img_in, width, height, numComponents);
-  //for(size_t i = 0; i < samples.size(); ++i)
-  //{
-  //  myEM.color(samples[i].first, samples[i].second);
-  //}
-
-  //WritePFM(argv[2], width, height, numComponents, img_in);
   float* sphere_in = loadPFM(argv[2], width, height, numComponents);
-
-
+  
+  renderSphereWithSample(myEM, sphere_in, width, height, numComponents, 128);
+  WritePFM(argv[3], width, height, numComponents, sphere_in);
 
   return 0;
 }
