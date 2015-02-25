@@ -40,7 +40,7 @@ end
 function [critical,reflectance] = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPar = refAir * cos(transmissionAngles);
     materialPar = refMat * cos(incidenceAngles);
-    reflectance = abs((materialPar-airPar) ./ (materialPar+airPar));
+    reflectance = power(abs((materialPar-airPar) ./ (materialPar+airPar)),2);
     [~,I] = find(reflectance == 1);
     critical = incidenceAngles(I);
     critical = critical(1);
@@ -50,7 +50,7 @@ end
 function [critical,reflectance] = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPerp = refAir * cos(incidenceAngles);
     materialPerp = refMat * cos(transmissionAngles);
-    reflectance = abs((airPerp-materialPerp) ./ (airPerp+materialPerp));
+    reflectance = power(abs((airPerp-materialPerp) ./ (airPerp+materialPerp)),2);
     [~,I] = find(reflectance == 1.0);
     critical = incidenceAngles(I);
     critical = critical(1);

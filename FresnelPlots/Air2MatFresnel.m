@@ -39,7 +39,7 @@ end
 function [Brewsters,reflectance] = parReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPar = refAir * cos(transmissionAngles);
     materialPar = refMat * cos(incidenceAngles);
-    reflectance = abs((materialPar-airPar) ./ (materialPar+airPar));
+    reflectance = power(abs((materialPar-airPar) ./ (materialPar+airPar)),2);
     [C,I] = min(reflectance);
     Brewsters = incidenceAngles(I);
 end
@@ -48,7 +48,7 @@ end
 function [r0,reflectance] = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat)
     airPerp = refAir * cos(incidenceAngles);
     materialPerp = refMat * cos(transmissionAngles);
-    reflectance = abs((airPerp-materialPerp) ./ (airPerp+materialPerp));
+    reflectance = power(abs((airPerp-materialPerp) ./ (airPerp+materialPerp)),2);
     r0 = reflectance(1);
 end
 
