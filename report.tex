@@ -71,9 +71,22 @@ The samples we took from the environment map can be see in
 attached files. For each sample pixel, we have surrounded it with a $9$ pixel 
 neighbourhood for better visualisation. 
 \\
-We have done sampling with the number of samples, N, being 64, 256 and 1024.
-These are "Sampling64.ppm", "Sampling256.ppm" and "Sampling1024.ppm". We have
-gamma corrected these too.
+We have done sampling with the number of samples, \texttt{N}, being $64$, $256$
+and $1024$. The steps we followed were approximately the same as discussed in the
+lectures. First we calculated the average luminance of each row of the environment
+map, stored them in an array. Then we normalised the array so that the sum of the 
+terms will add up to $1$. After we made a cumulative sum of the array so it will 
+serve as a cumulative density function. This is done in the very similar manner
+on each row.\\
+To sample, we then generated two random variables $u$ and $v$ between $0$ and $1$.
+We have to first find out which row $u$ is coming from, in other words, the first
+index from the luminance array that is greater than $u$. We noticed that since
+array is a cumulative density function, it is a increasing array. So we can 
+devise a binary search algorithm to find the index more efficiently. Similarly, this 
+technique can be done on when locating which column $v$ is coming from too.\\
+This method is faster than the usual linear search on the array, since the complexity
+is \texttt{log} in terms of the array size and the other method takes up to 
+linear time.
 
 \section{Part 3: Environment Map(EM) Sphere Rendering}
 
