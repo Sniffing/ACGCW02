@@ -68,6 +68,7 @@ void EM::sample(vector<pair<unsigned int, unsigned int> >& samples, int n)
   }
 }
 
+
 // This algorithm returns the index i of the input element n, 
 // where cdf[i] <= n and cdf[i+1] > n, or i is cdf.size()-1
 unsigned int binarySearch(vector<float> cdf, float n)
@@ -131,7 +132,10 @@ vector<float> EM::getComponentFromSample(pair<unsigned int, unsigned int> s)
   float x = cos(theta)*sin(phi);
   float y = sin(theta)*sin(phi);
   float z = cos(theta);
-  vector<float> result = {x, y, z};
+  //vector<float> result = {x, y, z};
+  float myvec[] = {x,y,z};
+  vector<float> result (myvec, myvec + sizeof(myvec) / sizeof(float) );
+
   return result;
 }
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include "loadPNM.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 #define PI 3.14159265358979323
@@ -16,6 +17,8 @@
 #define DIAMETER 511
 #define DIMENSION 3
 #define HALF_NEIGHBOURHOOD 4
+#define ALBEDO 1.0
+#define VISIBILITY 1.0
 #include <iostream>
 
 /*//////////////////////////////////////////////////////////////////////////
