@@ -4,13 +4,14 @@
 #include <vector>
 #include <cmath>
 #include "loadPNM.h"
+#include <stdio.h>
 
 #define PI 3.14159265358979323
 #define LOW_IGNORE_THRESH 0.005
 #define HIGH_IGNORE_THRESH 0.920
 #define TWO_STOP 4
 #define GAMMA 1.5
-#define N 2
+#define N 7
 #define RADIUS 255
 #define DIAMETER 511
 #define DIMENSION 3
@@ -72,19 +73,19 @@ void mapLatLongToSphere(const char* reflectance, const char* latLongMap,
 
 float returnHDRCoponentPFM(vector<float*> imgs_in, unsigned int index);
 
-int binarySearch(vector<float> cdf, float n);
+unsigned int binarySearch(vector<float> cdf, float n);
 
 void processHDRAndSavePFM(vector<const char*> images_in, const char *image_out);
-
-float totalLuminance(vector<pair<int, int>& samples);
 
 class EM
 {
   public:
     EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents);
-    void sample(vector<pair<int, int> >& samples, int n);
+    void sample(vector<pair<unsigned int, unsigned int> >& samples, int n);
     void color(unsigned int x, unsigned int y);
-    void MCImportanceSampling(vector<pair<int, int> >& samples, 
+    vector<float> getComponentFromSample(pair<unsigned int, unsigned int> s);
+    vector<float> getColorFromSample(pair<unsigned int, unsigned int> s);
+    float getLuminanceChannel();
 
   private:
     float* img_in;
@@ -96,5 +97,8 @@ class EM
     vector<vector<float> > pXs;
     vector<vector<float> > cXs;
 };
+
+void renderSphereWithSample(EM em, float* sphere, 
+    unsigned int width, unsigned int height, unsigned int numComponents, unsigned int n);
 
 #endif

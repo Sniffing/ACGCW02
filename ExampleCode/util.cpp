@@ -53,7 +53,7 @@ EM::EM(float* img_in, unsigned int width, unsigned int height, unsigned int numC
   }
 }
 
-void EM::sample(vector<pair<int, int> >& samples, int n)
+void EM::sample(vector<pair<unsigned int, unsigned int> >& samples, int n)
 {
   srand(time(NULL));
   float r1, r2;
@@ -122,7 +122,7 @@ float getLuminance(pair<int, int>& sample, float* EM, unsigned int height, unsig
 
 // This algorithm returns the index i of the input element n, 
 // where cdf[i] <= n and cdf[i+1] > n, or i is cdf.size()-1
-int binarySearch(vector<float> cdf, float n)
+unsigned int binarySearch(vector<float> cdf, float n)
 {
   int begin = 0;
   int end = cdf.size()-1;
@@ -172,6 +172,108 @@ void EM::color(unsigned int x, unsigned int y)
         }
       }
     } 
+  }
+}
+
+vector<float> EM::getComponentFromSample(pair<unsigned int, unsigned int> s)
+{
+  float phi = ((float)s.first/(float)width)*2*PI;
+  float theta = ((float)s.second/(float)height)*PI;
+
+  float x = cos(theta)*sin(phi);
+  float y = sin(theta)*sin(phi);
+  float z = cos(theta);
+  vector<float> result = {x, y, z};
+  return result;
+}
+
+vector<float> EM::getColorFromSample(pair<unsigned int, unsigned int> s)
+{
+  float total = 0;
+  unsigned int baseIndex = s.second*width*numComponents+s.first*numComponents;
+  for(unsigned int k = 0; k < numComponents; ++k)
+  {
+    unsigned int index = baseIndex+k;
+    total += img_in[index];
+  }
+  vector<float> nRGB;
+  for(unsigned int k = 0; k < numComponents; ++k)
+  {
+    unsigned int index = baseIndex+k;
+    nRGB.push_back(img_in[index]/total);
+  }
+  return nRGB;
+}
+
+float EM::getLuminanceChannel()
+{
+  float coeff = 2*PI*PI/((float)width*(float)height);
+  float sum = 0;
+
+  for(unsigned int i = 0; i < height; ++i)
+  {
+    for(unsigned int j = 0; j < width; ++j)
+    {
+      float luminance = 0;
+      for(unsigned int k = 0; k < numComponents; ++k)
+      {
+        unsigned int index = i*width*numComponents+j*numComponents+k;
+        luminance += img_in[index];
+      }
+      float sinTheta = sin(((float)i/(float)height)*PI);
+      luminance /= (float)numComponents;
+      luminance *= sinTheta;
+      sum += luminance;
+    }
+  }
+  return coeff*sum;
+}
+
+void renderSphereWithSample(EM em, float* sphere, 
+    unsigned int width, unsigned int height, unsigned int numComponents, unsigned int n)
+{
+  vector<pair<unsigned int, unsigned int> > samples;
+  em.sample(samples, n);
+  float emLuminanceChannel = em.getLuminanceChannel();
+
+  for(unsigned int i = 0; i < height; ++i)
+  {
+    for(unsigned int j = 0; j < width; ++j)
+    {
+      vector<float> normal;
+      for(unsigned int k = 0; k < numComponents; ++k)
+      {
+        unsigned int index = i*width*numComponents+j*numComponents+k;
+        normal.push_back(sphere[index]);
+      }
+
+      vector<float> nRGB(numComponents, 0);
+      for(size_t l = 0; l < samples.size(); ++l)
+      {
+        float NdotL = 0;
+        vector<float> sampleVector = em.getComponentFromSample(samples[l]);
+        for(int m = 0; m < DIMENSION; ++m)
+        {
+          NdotL += normal[m]*sampleVector[m];
+        }
+        vector<float> nRGBSample = em.getColorFromSample(samples[l]);
+        for(int q = 0; q < DIMENSION; ++q)
+        {
+          nRGB[q] += nRGBSample[q]*NdotL;
+        }
+      }
+
+      for(unsigned int l = 0; l < numComponents; ++l)
+      {
+        nRGB[l] /= samples.size();
+      }
+
+      for(unsigned int k = 0; k < numComponents; ++k)
+      {
+        unsigned int index = i*width*numComponents+j*numComponents+k;
+        sphere[index] = emLuminanceChannel*nRGB[k]/PI;
+      }
+    }
   }
 }
 
@@ -377,7 +479,7 @@ void LoadPFMSavePPM(const char *image_in, const char *image_out, char (*func)(fl
 {
   unsigned int width, height, numComponents;
   float* img_in = loadPFM(image_in, width, height, numComponents);
-  toneMapper(img_in, width, height, numComponents);
+  //toneMapper(img_in, width, height, numComponents);
   unsigned char *img_out = new unsigned char [width*height*numComponents];
   applyFunctionOnAllPixelsPPMFromPFM(img_in, img_out, width, height, numComponents, func);
   WritePNM(image_out, width, height, numComponents, img_out);
@@ -400,23 +502,38 @@ void reflectanceCircleAndSavePFM(const char *image_out)
   v.push_back(0.0f);
   v.push_back(0.0f);
   v.push_back(1.0f);
+  float x, y;
   for(unsigned int i = 0; i < height; ++i)
   {
     for(unsigned int j = 0; j < width; ++j)
     {
-      normal = getSurfaceNormal(getX(j), -getY(i));
-      r = getReflectanceVector(normal, v);
-      for(unsigned int k = 0; k < numComponents; ++k)
+      unsigned int index = i*width*numComponents + j*numComponents;
+      x = getX(j);
+      y = getY(i);
+      normal = getSurfaceNormal(x, y);
+      if(isInCircle(i, j))
       {
-        unsigned int index = i*width*numComponents + j*numComponents + k;
-        img_out[index] = isInCircle(i, j) ? r[k] : 0.0f;
+        img_out[index] = normal[0];
+        img_out[index+1] = normal[1];
+        img_out[index+2] = normal[2];
+      } else 
+      {
+        img_out[index] = 0;
+        img_out[index+1] = 0;
+        img_out[index+2] = 0;
       }
+
+      //r = getReflectanceVector(normal, v);
+      //for(unsigned int k = 0; k < numComponents; ++k)
+      //{
+      //  unsigned int index = i*width*numComponents + j*numComponents + k;
+      //  img_out[index] = isInCircle(i, j) ? r[k] : 0.0f;
+      //}
     }
   }
   WritePFM(image_out, width, height, numComponents, img_out);
   delete img_out;
 }
-
 
 void mapLatLongToSphere(const char* reflectance, const char* latLongMap, 
     const char* image_out)
