@@ -15,6 +15,8 @@
 #define DIAMETER 511
 #define DIMENSION 3
 #define HALF_NEIGHBOURHOOD 4
+#define ALBEDO 1.0
+#define VISIBILITY 1.0
 #include <iostream>
 
 /*//////////////////////////////////////////////////////////////////////////
@@ -73,12 +75,16 @@ float returnHDRCoponentPFM(vector<float*> imgs_in, unsigned int index);
 int binarySearch(vector<float> cdf, float n);
 
 void processHDRAndSavePFM(vector<const char*> images_in, const char *image_out);
+
+float totalLuminance(vector<pair<int, int>& samples);
+
 class EM
 {
   public:
     EM(float* img_in, unsigned int width, unsigned int height, unsigned int numComponents);
     void sample(vector<pair<int, int> >& samples, int n);
     void color(unsigned int x, unsigned int y);
+    void MCImportanceSampling(vector<pair<int, int> >& samples, 
 
   private:
     float* img_in;

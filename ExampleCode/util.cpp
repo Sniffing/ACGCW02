@@ -68,6 +68,58 @@ void EM::sample(vector<pair<int, int> >& samples, int n)
   }
 }
 
+void EM::MCImportanceSampling(vector<pair<int, int> >& samples)
+{
+    float lambertianBRDF = ALBEDO / PI;
+    int N = samples.size();
+
+    monteCarloEstmate = 
+
+    float luminance_integral = 
+
+    float tL = totalLuminance(samples, this->img_in, this->height, this->width, this->numComponents);
+    float qL = 0.0;
+
+    for (int i = 0; i < N; ++i)
+    {
+      qL = getLuminance(samples[i], this->img_in, this->height, this->width, this->numComponents);
+      mcEstimate += (lambertian * cos(theta) * luminance * VISIBILITY) / qL;
+    }
+    mcEstimate /= N;
+}
+
+float calculateLuminanceIntegral()
+{
+  float pdf = (2* PI *PI); //uniform sampling from map (pi by 2pi)
+  
+  integral = 1/N * pdf * totalSampleLuminance;
+  return integral;
+}
+
+//Calculates the total luminance of collected samples
+float totalLuminance(vector<pair<int, int>& samples, float* EM, unsigned int height, unsigned int width, unsigned int numComponents)
+{
+  float total = 0.0;
+  for(int i = 0 ; i < samples.size(); ++i)
+  {
+    pair<int, int> pixel = samples[i];
+    float luminance = getLuminance(pixel, EM, height, width, numComponents);  
+    total += luminance;
+  }
+  return total;
+}
+
+float getLuminance(pair<int, int>& sample, float* EM, unsigned int height, unsigned int width, unsigned int numComponents)
+{
+  float luminance = 0.0;
+  for(unsigned int k = 0; k < numComponents; ++k)
+  {
+    unsigned int index = i*width*numComponents + j*numComponents + k;
+    luminance += img_in[index];
+  }
+  return luminance / 3.0;
+}
+
 // This algorithm returns the index i of the input element n, 
 // where cdf[i] <= n and cdf[i+1] > n, or i is cdf.size()-1
 int binarySearch(vector<float> cdf, float n)
