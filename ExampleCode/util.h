@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include "loadPNM.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 #define PI 3.14159265358979323
