@@ -4,7 +4,7 @@ function [] = Shlick()
 %   reflectance for such a material using the reflectance value 
 %   at normal incidence from 1st part as the R0 parameter.
 
-r0 = 0.2; % Optained from Air2MatFresnel
+r0 = 0.04; % Optained from Air2MatFresnel
 incidenceAngles = linspace(0,pi/2,100);
 approximations = schlickApprox(r0,incidenceAngles);
 

@@ -22,8 +22,8 @@ BrewstersAngle = (Brewsters/pi) * 180
 [r0,perpComponent] = perpReflectance(incidenceAngles,transmissionAngles,refAir,refMat);
 
 figure
-plot(incidenceAngles,parComponent, incidenceAngles, perpComponent)
-
+plot(incidenceAngles,parComponent, incidenceAngles, perpComponent,Brewsters,incidenceAngles/2,'-')
+legend('Parallel Component', 'Perpendicular Component');
 end
 
 %Works out transmission angles from Snell's equation
